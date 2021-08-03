@@ -10,7 +10,22 @@
 
     <br />
     <div>
+      <button id="resetBtn" class="button btn-primary">reset</button>
+      <button id="execBtn" class="button btn-primary">execute</button>
       <button id="clearBtn" class="button btn-primary">clear</button>
+    </div>
+    <div>
+      <input
+        type="range"
+        min="1"
+        max="20"
+        value="5"
+        class="slider slider-outer"
+        step="any"
+        id="inputStroke"
+      />
+    </div>
+    <div>
       <input
         type="range"
         min="1"
@@ -18,14 +33,24 @@
         value="5"
         class="slider"
         step="any"
-        id="myRange"
+        id="inputSize"
       />
-      
     </div>
     <div>
-      <span id="indicator" class="dot"></span>
+      <svg height="100" width="100">
+        <circle
+          id="indicator"
+          cx="50"
+          cy="50"
+          r="20"
+          stroke="gray"
+          stroke-width="5"
+          fill="black"
+        />
+      </svg>
     </div>
 
+    <script src="agent.js"></script>
     <script src="navigate.js"></script>
   </body>
 </html>
