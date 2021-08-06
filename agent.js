@@ -1,6 +1,3 @@
-class Map {
-  constructor() {}
-}
 
 class Agent {
   constructor(x, y) {

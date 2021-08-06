@@ -19,7 +19,7 @@
         type="range"
         min="1"
         max="20"
-        value="5"
+        value="15"
         class="slider slider-outer"
         step="any"
         id="inputStroke"
@@ -30,7 +30,7 @@
         type="range"
         min="1"
         max="20"
-        value="5"
+        value="10"
         class="slider"
         step="any"
         id="inputSize"
@@ -38,18 +38,12 @@
     </div>
     <div>
       <svg height="100" width="100">
-        <circle
-          id="indicator"
-          cx="50"
-          cy="50"
-          r="20"
-          stroke="gray"
-          stroke-width="5"
-          fill="black"
-        />
+        <circle id="indicator_out" cx="50" cy="50" r="20" fill="gray" />
+        <circle id="indicator_in" cx="50" cy="50" r="20" fill="black" />
       </svg>
     </div>
 
+    <script src="astar.js"></script>
     <script src="agent.js"></script>
     <script src="navigate.js"></script>
   </body>

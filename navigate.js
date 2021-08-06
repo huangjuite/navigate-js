@@ -4,16 +4,22 @@ var rect = canvas.getBoundingClientRect();
 var draw = false;
 var frame = 0;
 var interval = null;
+var mPos = { x: 0, y: 0 };
 
 var resetBtn = document.getElementById("resetBtn");
 var clearBtn = document.getElementById("clearBtn");
 var execBtn = document.getElementById("execBtn");
 var slideBar = document.getElementById("inputSize");
 var slideBarStroke = document.getElementById("inputStroke");
-var indicator = document.getElementById("indicator");
+var indicator_out = document.getElementById("indicator_out");
+var indicator_in = document.getElementById("indicator_in");
 
+var backColor = "#DDD";
+ctx.fillStyle = backColor;
+ctx.fillRect(0, 0, canvas.width, canvas.height);
 var map = ctx.getImageData(0, 0, canvas.width, canvas.height);
 var agent = null;
+var drawValue = { in: 0, out: 0 };
 
 document.addEventListener("mousemove", mouseMove);
 document.addEventListener("mousedown", mouseDown);
@@ -43,35 +49,30 @@ function execute() {
     agentRect.height
   );
   map = ctx.getImageData(0, 0, canvas.width, canvas.height);
-  interval = setInterval(render, 10);
-  execBtn.disabled = true;
+
+  gridMap = new GridMap(map);
+
+  console.log(gridMap.getValue(100, 100));
+  // interval = setInterval(render, 10);
+  // execBtn.disabled = true;
 }
 
-function changeStroke(e) {
-  if (parseFloat(slideBar.value) > parseFloat(slideBarStroke.value)) {
-    slideBar.setAttribute("value", slideBarStroke.value.toString());
-    console.log('s')
-  }
-  indicator.setAttribute(
-    "stroke-width",
-    (slideBarStroke.value - slideBar.value).toString()
-  );
-  indicator.setAttribute("r", slideBar.value.toString());
+function changeStroke() {
+  let r = parseFloat(slideBar.value) + parseFloat(slideBarStroke.value);
+  indicator_out.setAttribute("r", r.toString());
+  drawValue.out = r*2;
 }
 
-function changeSize(e) {
-  if (parseFloat(slideBar.value) > parseFloat(slideBarStroke.value)) {
-    slideBarStroke.setAttribute("value", slideBar.value.toString());
-  }
-  indicator.setAttribute(
-    "stroke-width",
-    (slideBarStroke.value - slideBar.value).toString()
-  );
-  indicator.setAttribute("r", slideBar.value.toString());
+function changeSize() {
+  let r = parseFloat(slideBar.value);
+  indicator_in.setAttribute("r", r.toString());
+  drawValue.in = r*2;
+  changeStroke();
 }
 
 function clearCanvas() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = backColor;
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
   map = ctx.getImageData(0, 0, canvas.width, canvas.height);
   agent.drawAgent(canvas, ctx);
 }
@@ -79,19 +80,35 @@ function clearCanvas() {
 function mouseMove(e) {
   if (execBtn.disabled) return;
   if (draw) {
+    ctx.lineWidth = drawValue.out;
+    ctx.strokeStyle = "gray";
+    ctx.lineTo(e.clientX - rect.left, e.clientY - rect.top);
+    ctx.moveTo(mPos.x, mPos.y);
+    ctx.stroke();
+    ctx.lineWidth = drawValue.in;
+    ctx.strokeStyle = "black";
     ctx.lineTo(e.clientX - rect.left, e.clientY - rect.top);
     ctx.stroke();
   }
+  mPos.x = e.clientX - rect.left;
+  mPos.y = e.clientY - rect.top;
 }
 
 function mouseDown(e) {
   if (execBtn.disabled) return;
   draw = true;
   ctx.beginPath();
-  ctx.strokeStyle = "black";
-  ctx.moveTo(e.clientX - rect.left, e.clientY - rect.top);
-  ctx.lineWidth = slideBar.value;
   ctx.lineCap = "round";
+
+  ctx.lineWidth = drawValue.out;
+  ctx.strokeStyle = "gray";
+  ctx.lineTo(e.clientX - rect.left, e.clientY - rect.top);
+  ctx.moveTo(mPos.x, mPos.y);
+  ctx.stroke();
+  ctx.lineWidth = drawValue.in;
+  ctx.strokeStyle = "black";
+  ctx.lineTo(e.clientX - rect.left, e.clientY - rect.top);
+  ctx.stroke();
 }
 function mouseUp(e) {
   if (execBtn.disabled) return;
@@ -100,7 +117,11 @@ function mouseUp(e) {
 }
 
 function setup() {
+  ctx.fillStyle = backColor;
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
   ctx.putImageData(map, 0, 0);
+  changeStroke();
+  changeSize();
 
   // tmp
   path = [];
@@ -114,7 +135,8 @@ function setup() {
 }
 
 function render() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = backColor;
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
 
   //draw map
   ctx.putImageData(map, 0, 0);
